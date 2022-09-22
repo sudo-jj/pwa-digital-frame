@@ -1,5 +1,6 @@
 const video = document.createElement('video');
 const canvas = window.canvas = document.createElement('canvas');
+const container = document.getElementsByClassName('container')[0];
 canvas.width = video.width = 200;
 canvas.height = video.height = 150;
 
@@ -19,14 +20,14 @@ const constraints = {
 
 const handleError = (error) => {
     console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
-  }
+}
 
 
 const handleSuccess = (stream) => {
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
     let = brightnessValue = photonCount();
 
-    console.log( setBrightness(brightnessValue) );
+    console.log(setBrightness(brightnessValue));
 
     stopStream(stream);
 }
@@ -38,7 +39,7 @@ const getCameraFrame = () => {
 const stopStream = (stream) => {
     const tracks = stream.getTracks();
     tracks.forEach((track) => {
-      track.stop();
+        track.stop();
     });
 }
 
@@ -57,7 +58,9 @@ const photonCount = () => {
 }
 
 const setBrightness = (bv) => {
-    return 1 - (bv / maxPhoton);
+    const b = Math.max(33, Math.floor((bv / maxPhoton) * 100));
+    container.style.filter = 'brightness(' + b + '%)';
+    return b;
 }
 
 const _getMaxPhotonCount = () => {
@@ -73,5 +76,5 @@ const _getMaxPhotonCount = () => {
 const maxPhoton = _getMaxPhotonCount();
 
 
-setInterval(getCameraFrame, 10 * 1000);
+setInterval(getCameraFrame, 60 * 1000);
 getCameraFrame();
