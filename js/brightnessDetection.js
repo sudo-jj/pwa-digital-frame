@@ -1,8 +1,11 @@
+const statusTxt = document.getElementsByClassName('status')[0];
+
 const video = document.createElement('video');
 const canvas = window.canvas = document.createElement('canvas');
 const container = document.getElementsByClassName('container')[0];
 canvas.width = video.width = 200;
 canvas.height = video.height = 150;
+const ctx = canvas.getContext('2d');
 
 const redTHz = 430;
 const greenTHz = 580;
@@ -24,8 +27,10 @@ const handleError = (error) => {
 
 
 const handleSuccess = (stream) => {
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    let = brightnessValue = photonCount();
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    let brightnessValue = photonCount();
+    statusTxt.innerText += brightnessValue+' ';
+
 
     console.log(setBrightness(brightnessValue));
 
@@ -46,7 +51,7 @@ const stopStream = (stream) => {
 const photonCount = () => {
     let total = 0;
     let probability = 3;
-    const img = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
     for (i = 0; i < img.data.length; i += 4) {
         if (Math.floor(Math.random() * probability) == 0) {
             total += (img.data[i] * redTHz);
@@ -76,5 +81,5 @@ const _getMaxPhotonCount = () => {
 const maxPhoton = _getMaxPhotonCount();
 
 
-setInterval(getCameraFrame, 60 * 1000);
+setInterval(getCameraFrame, 5 * 1000);
 getCameraFrame();
