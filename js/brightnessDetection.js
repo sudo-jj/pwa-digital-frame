@@ -97,5 +97,5 @@ const _getMaxPhotonCount = () => {
 const maxPhoton = _getMaxPhotonCount();
 
 
-setInterval(getCameraFrame, 5 * 1000);
+setInterval(getCameraFrame, 60 * 1000);
 getCameraFrame();
