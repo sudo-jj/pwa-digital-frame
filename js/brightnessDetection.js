@@ -7,6 +7,9 @@ canvas.width = video.width = 200;
 canvas.height = video.height = 150;
 const ctx = canvas.getContext('2d');
 
+//document.body.append(canvas);
+//document.body.append(video);
+
 const redTHz = 430;
 const greenTHz = 580;
 const blueTHz = 670;
@@ -14,7 +17,7 @@ const blueTHz = 670;
 const constraints = {
     audio: false,
     video: {
-        facingMode: "user",
+        //facingMode: "user",
         width: { ideal: video.width },
         height: { ideal: video.height },
         frameRate: { ideal: 60 }
@@ -27,14 +30,27 @@ const handleError = (error) => {
 
 
 const handleSuccess = (stream) => {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    let brightnessValue = photonCount();
-    statusTxt.innerText += brightnessValue+' ';
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+        video.play();
+    }
+
+    setTimeout(() => {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        let brightnessValue = photonCount();
+        console.log(brightnessValue/maxPhoton);
+        console.log(setBrightness(brightnessValue));
+        stopStream(stream);
+    }, 2000);
 
 
-    console.log(setBrightness(brightnessValue));
 
-    stopStream(stream);
+    //  statusTxt.innerText += brightnessValue+' ';
+
+
+
+
+    //  stopStream(stream);
 }
 
 const getCameraFrame = () => {
@@ -50,7 +66,7 @@ const stopStream = (stream) => {
 
 const photonCount = () => {
     let total = 0;
-    let probability = 3;
+    let probability = 1;
     const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
     for (i = 0; i < img.data.length; i += 4) {
         if (Math.floor(Math.random() * probability) == 0) {
@@ -81,5 +97,5 @@ const _getMaxPhotonCount = () => {
 const maxPhoton = _getMaxPhotonCount();
 
 
-setInterval(getCameraFrame, 5 * 1000);
+//setInterval(getCameraFrame, 5 * 1000);
 getCameraFrame();
