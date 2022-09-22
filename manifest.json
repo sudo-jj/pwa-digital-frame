@@ -1,10 +1,11 @@
 {
     "name": "Picture Frame",
-    "short_name": "frame",
+    "short_name": "Picture Frame",
     "lang": "en-US",
     "start_url": "./index.html",
-    "display": "standalone",
+    "display": "fullscreen",
     "background_color": "black",
     "theme_color": "black",
-    "orientation": "landscape"
+    "orientation": "landscape",
+    "scope": "/pwa-digital-frame/"
 }
