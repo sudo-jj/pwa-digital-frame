@@ -2,7 +2,7 @@ const statusTxt = document.getElementsByClassName('status')[0];
 
 const video = document.createElement('video');
 const canvas = window.canvas = document.createElement('canvas');
-const container = document.getElementsByClassName('container')[0];
+
 canvas.width = video.width = 200;
 canvas.height = video.height = 150;
 const ctx = canvas.getContext('2d');
@@ -54,6 +54,9 @@ const handleSuccess = (stream) => {
 }
 
 const getCameraFrame = () => {
+    if(!fileHandle) {
+        return;
+    }
     navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
 }
 

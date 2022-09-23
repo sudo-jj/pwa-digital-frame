@@ -1,3 +1,5 @@
+const container = document.getElementsByClassName('container')[0];
+
 window.onload = () => {
     'use strict';
 
