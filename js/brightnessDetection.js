@@ -10,10 +10,6 @@ const ctx = canvas.getContext('2d');
 //document.body.append(canvas);
 //document.body.append(video);
 
-const redTHz = 430;
-const greenTHz = 580;
-const blueTHz = 670;
-
 const constraints = {
     audio: false,
     video: {
@@ -37,9 +33,9 @@ const handleSuccess = (stream) => {
 
     setTimeout(() => {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        let brightnessValue = photonCount();
-        console.log(brightnessValue/maxPhoton);
-        console.log(setBrightness(brightnessValue));
+        let brightnessValue = rgbToLux();
+        console.log(brightnessValue);
+        setBrightness(brightnessValue)
         stopStream(stream);
     }, 2000);
 
@@ -54,9 +50,6 @@ const handleSuccess = (stream) => {
 }
 
 const getCameraFrame = () => {
-    if(!fileHandle) {
-        return;
-    }
     navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
 }
 
@@ -67,37 +60,28 @@ const stopStream = (stream) => {
     });
 }
 
-const photonCount = () => {
-    let total = 0;
-    let probability = 1;
+const rgbToLux = () => {
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let t = 0;
     const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
     for (i = 0; i < img.data.length; i += 4) {
-        if (Math.floor(Math.random() * probability) == 0) {
-            total += (img.data[i] * redTHz);
-            total += (img.data[i + 1] * greenTHz);
-            total += (img.data[i + 2] * blueTHz);
-        }
+        r += img.data[i];
+        g += img.data[i + 1];
+        b += img.data[i + 2];
+        t += 1;
     }
-    return total * probability;
+    return 179 * ((r / t * .265) + (g / t * .67) + (b/t * .065));
 }
 
-const setBrightness = (bv) => {
-    const b = Math.max(33, Math.floor((bv / maxPhoton) * 100));
+//taken from https://www.maximintegrated.com/en/design/technical-documents/app-notes/4/4913.html  sort of...
+const setBrightness = (lux) => {
+    
+    const b = Math.min(100, 9.9323 * Math.log(lux));
     container.style.filter = 'brightness(' + b + '%)';
     return b;
 }
-
-const _getMaxPhotonCount = () => {
-    let total = 0;
-    for (let x = 0; x < canvas.width; x++) {
-        for (let y = 0; y < canvas.height; y++) {
-            total += (255 * redTHz) + (255 * greenTHz) + (255 * blueTHz);
-        }
-    }
-    return total;
-}
-
-const maxPhoton = _getMaxPhotonCount();
 
 
 setInterval(getCameraFrame, 60 * 1000);

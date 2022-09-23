@@ -1,4 +1,6 @@
 const container = document.getElementsByClassName('container')[0];
+const loader = document.getElementsByClassName('loader')[0];
+
 
 window.onload = () => {
     'use strict';

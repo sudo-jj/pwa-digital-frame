@@ -1,53 +1,66 @@
-let fileHandle = null;
-let fileRef = null;
-let lastModified = null;
-let fileSize = null;
+const peer = new Peer({ debug: 3 });
+let conn = null;
+let connected = false;
 
-const fr = new FileReader();
-
-fr.addEventListener("load", () => {
-    container.style.backgroundImage = 'url('+fr.result+')';
-}, false);
-
-container.addEventListener('click', async (evt) => {
-    if (!fileHandle) {
-        const pickerOpts = {
-            types: [
-                {
-                    description: 'Images',
-                    accept: {
-                        'image/*': ['.png', '.gif', '.jpeg', '.jpg']
-                    }
-                },
-            ],
-            excludeAcceptAllOption: true,
-            multiple: false
-        };
-        fileHandle = await window.showOpenFilePicker(pickerOpts);
-        console.log(fileHandle[0]);
-        fileRef = await fileHandle[0].getFile();
-
-    }
+peer.on('open', (id) => {
+    conn = peer.connect('correct-horse');
+    conn.on('open', onConnectionConnect);
 });
 
-const checkForUpdate = async () => {
-    if (fileHandle != null) {
-        delete fileRef;
-        fileRef = await fileHandle[0].getFile();
-        console.log(fileRef);
 
-        if (fileRef.lastModified != lastModified || fileSize != fileRef.size) {
-            changeImage();
-        }
-        lastModified = fileRef.lastModified;
-        fileSize = fileRef.size;
+
+peer.on('disconnected',(e) => {
+    console.log(e);
+    connected = false;
+});
+
+peer.on('close',(e)=> {
+    console.log(e);
+    connected = false;
+})
+
+peer.on('error',(e) => {
+    console.log(e);
+});
+
+const onConnectionConnect = () => {
+    connected = true;
+    conn.on('data', onData);
+    conn.on('disconnected',(e) => {
+        console.log(e);
+        connected = false;
+    });
+    
+    conn.on('close',(e)=> {
+        console.log(e);
+        connected = false;
+    })
+    
+    conn.on('error',(e) => {
+        console.log(e);
+    });
+}
+
+const checkConnection = () => {
+    if(connected == false && conn != null) {
+        console.log('attempting reconnect');
+        conn.close();
+        conn = peer.connect('correct-horse');
+        conn.on('open', onConnectionConnect);
     }
 }
 
-const changeImage = () => {
-    console.log(fr.readAsDataURL(fileRef));
-
-    // container.style.backgroundImage = 'url()'
+const onData = (data) => {
+    console.log(data);
+    if(data.imageURL) {
+        loader.src = data.imageURL;
+    }
 }
 
-setInterval(checkForUpdate, 3000);
+loader.addEventListener('load',(evt)=>{
+    console.log(evt.path[0].complete);
+    container.style.backgroundImage = 'url('+evt.path[0].src+')'
+});
+
+setInterval(checkConnection, 60000);
+

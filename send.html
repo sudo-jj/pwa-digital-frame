@@ -9,18 +9,32 @@
 </head>
 
 <body>
-
+    <input id="url"></input>
+    <button onclick="sendURL()">send</button>
     <script>
-        var peer = new Peer();
+        let peer = new Peer('correct-horse', { debug: 3 });
+        let connection = null;
 
-        var conn = peer.connect('ssss');
-        // on open will be launch when you successfully connect to PeerServer
-        conn.on('open', function () {
-            console.log('opened');
-            // here you have conn.id
-            conn.send('hi!');
+        peer.on('connection', (conn) => {
+            conn.on('data', onData);
+            connection = conn;
         });
+
+        const onData = (data) => {
+            console.log(data);
+        }
+
+        peer.on('open', (id) => {
+
+        });
+
+        const sendURL = () => {
+            connection.send({imageURL:url.value});
+        }
+
     </script>
+
+
 </body>
 
 </html>
