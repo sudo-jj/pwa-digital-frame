@@ -13,7 +13,7 @@ const ctx = canvas.getContext('2d');
 const constraints = {
     audio: false,
     video: {
-        facingMode: "environment",
+        facingMode: { exact: "environment" },
         width: { ideal: video.width },
         height: { ideal: video.height },
         frameRate: { ideal: 60 }
@@ -72,12 +72,12 @@ const rgbToLux = () => {
         b += img.data[i + 2];
         t += 1;
     }
-    return 179 * ((r / t * .265) + (g / t * .67) + (b/t * .065));
+    return 179 * ((r / t * .265) + (g / t * .67) + (b / t * .065));
 }
 
 //taken from https://www.maximintegrated.com/en/design/technical-documents/app-notes/4/4913.html  
 const setBrightness = (lux) => {
-    
+
     const b = Math.min(100, 9.9323 * Math.log(lux) + 27.059);
     container.style.filter = 'brightness(' + b + '%)';
     return b;
