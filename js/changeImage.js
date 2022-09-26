@@ -1,66 +1,52 @@
-const peer = new Peer({ debug: 3 });
-let conn = null;
+const url = "homeassistant:1880/endpoint";
+const socketurl = `ws://${url}/ws/`;
 let connected = false;
-
-peer.on('open', (id) => {
-    conn = peer.connect('correct-horse');
-    conn.on('open', onConnectionConnect);
-});
+let socket;
 
 
+const connect = () => {
+    if (!connected) {
+        try {
+            socket = new WebSocket(socketurl);
 
-peer.on('disconnected',(e) => {
-    console.log(e);
-    connected = false;
-});
+            socket.addEventListener('open', () => {
+                console.log('open');
+                connected = true;
+            });
 
-peer.on('close',(e)=> {
-    console.log(e);
-    connected = false;
-})
+            socket.addEventListener('message', (evt) => {
+                img = JSON.parse(evt.data);
+                console.log(img);
+                if (img.dataURL) {
+                    loader.src = img.dataURL;
+                }
+            });
 
-peer.on('error',(e) => {
-    console.log(e);
-});
+            socket.addEventListener('close', () => {
+                connected = false;
+            });
 
-const onConnectionConnect = () => {
-    connected = true;
-    conn.on('data', onData);
-    conn.on('disconnected',(e) => {
-        console.log(e);
-        connected = false;
-    });
-    
-    conn.on('close',(e)=> {
-        console.log(e);
-        connected = false;
-    })
-    
-    conn.on('error',(e) => {
-        console.log(e);
-    });
-}
 
-const checkConnection = () => {
-    if(connected == false && conn != null) {
-        console.log('attempting reconnect');
-        conn.close();
-        conn = peer.connect('correct-horse');
-        conn.on('open', onConnectionConnect);
+
+        } catch (err) {
+            console.log(err);
+            console.log('unable to connect.');
+        }
     }
+
 }
 
-const onData = (data) => {
-    console.log(data);
-    if(data.imageURL) {
-        loader.src = data.imageURL;
-    }
-}
-
-loader.addEventListener('load',(evt)=>{
+loader.addEventListener('load', (evt) => {
     console.log(evt.path[0].complete);
-    container.style.backgroundImage = 'url('+evt.path[0].src+')'
+    container.style.backgroundImage = 'url(' + evt.path[0].src + ')';
 });
 
-setInterval(checkConnection, 60000);
+
+setInterval(connect, 3000);
+
+
+
+
+
+
 
