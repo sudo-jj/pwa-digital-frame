@@ -1,5 +1,5 @@
-const url = "homeassistant:1880/endpoint";
-const socketurl = `ws://${url}/ws/`;
+
+const socketurl = `ws://${domain}/ws/`;
 let connected = false;
 let socket;
 
