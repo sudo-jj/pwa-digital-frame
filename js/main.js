@@ -8,5 +8,11 @@ window.onload = () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./script.js');
     }
-    document.querySelector("body").requestFullscreen();
+
+    document.addEventListener('dblclick', () => {
+        document.querySelector("body").requestFullscreen();
+    });
+
+
 }
+
