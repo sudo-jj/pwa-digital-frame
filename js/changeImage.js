@@ -9,9 +9,8 @@ const connect = () => {
         try {
             if(socket!=null) {
                 socket.close();
-            }else{
-                socket = new WebSocket(socketurl);
             }
+            socket = new WebSocket(socketurl);
 
             socket.addEventListener('open', () => {
                 console.log('open');
@@ -28,9 +27,10 @@ const connect = () => {
 
             socket.addEventListener('close', () => {
                 connected = false;
-                socket.close();
-
-                socket = new WebSocket(socketurl);
+                try {
+                    socket.close();
+                }catch(err) {
+                }
             });
 
 
