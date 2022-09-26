@@ -7,7 +7,11 @@ let socket;
 const connect = () => {
     if (!connected) {
         try {
-            socket = new WebSocket(socketurl);
+            if(socket!=null) {
+                socket.close();
+            }else{
+                socket = new WebSocket(socketurl);
+            }
 
             socket.addEventListener('open', () => {
                 console.log('open');
@@ -24,6 +28,9 @@ const connect = () => {
 
             socket.addEventListener('close', () => {
                 connected = false;
+                socket.close();
+
+                socket = new WebSocket(socketurl);
             });
 
 
@@ -31,6 +38,8 @@ const connect = () => {
         } catch (err) {
             console.log(err);
             console.log('unable to connect.');
+            socket.close();
+            connected = false;
         }
     }
 
