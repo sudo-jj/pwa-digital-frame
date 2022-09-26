@@ -13,7 +13,7 @@ const ctx = canvas.getContext('2d');
 const constraints = {
     audio: false,
     video: {
-        //facingMode: "user",
+        facingMode: "user",
         width: { ideal: video.width },
         height: { ideal: video.height },
         frameRate: { ideal: 60 }
