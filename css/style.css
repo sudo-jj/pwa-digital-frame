@@ -15,7 +15,7 @@ html,
 
 /* Center the content in the browser window */
 .container {
-    background-image: url(https://i.redd.it/puy3egf1cgp91.jpg);
+    background-image: url(https://dummyimage.com/800x500/000/ffffff.png&text=send+imgURL+to+/endpoint/ws);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 50% 50%;
